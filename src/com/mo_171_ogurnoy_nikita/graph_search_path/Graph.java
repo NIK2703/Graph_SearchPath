@@ -1,11 +1,8 @@
 package com.mo_171_ogurnoy_nikita.graph_search_path;
 
-import com.sun.org.apache.xml.internal.security.utils.JavaUtils;
-
 import java.util.*;
 
 public class Graph {
-
     Double weightEdge[][];
 
     Graph(Double weightEdge[][]){
@@ -14,6 +11,7 @@ public class Graph {
         System.arraycopy(weightEdge, 0, this.weightEdge, 0, vnum);
     }
 
+    //getShortestPath
     ArrayList<Path> getShortestPath(Integer start, Integer target){
         return getShortestPath(start, target, weightEdge);
     }
@@ -146,4 +144,23 @@ public class Graph {
         return devpath;
     }
 
+    //getSolutionTravelingSalesmanProblem
+    public Path getSolutionTravelingSalesmanProblem() {
+        if(!isFull()) {
+            return null;
+        }
+
+        return null;
+    }
+
+    public boolean isFull () {
+        for (int i = 0; i < weightEdge.length; i++) {
+            for (int j = 0; j < weightEdge.length; j++) {
+                if (weightEdge.equals(Double.MAX_VALUE)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }
