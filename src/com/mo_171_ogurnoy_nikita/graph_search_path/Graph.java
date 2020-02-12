@@ -1,5 +1,6 @@
 package com.mo_171_ogurnoy_nikita.graph_search_path;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Graph {
@@ -150,13 +151,36 @@ public class Graph {
             return null;
         }
 
+        Path minPath;
+        Double[][] matrix = ArrayUtils.copy(weightEdge);
+        Double h = ArrayUtils.adductMatrix(matrix);
+        int currentVertex = 0;
+
+        int[] row = ArrayUtils.getMinElementIndex(matrix);
+
+        nextEdge(row[0], row[1], matrix, h);
+
+
         return null;
+    }
+
+    public boolean nextEdge (int vertexEdgeOut, int vertexEdgeIn, Double[][] altWeightEdge, Double h) {
+        Double[][] redMatrix = ArrayUtils.copy(altWeightEdge);
+        Path.blockVertex(redMatrix,1);
+        Path.blockEdge(redMatrix, vertexEdgeIn, vertexEdgeOut);
+        Double includeEdgeH = h + ArrayUtils.adductMatrix(redMatrix);
+        Double a = ArrayUtils.getMinInRow(altWeightEdge, vertexEdgeOut);
+        Double b = ArrayUtils.getMinInColumn(altWeightEdge, vertexEdgeIn);
+        Double excludeEdgeH = h + ArrayUtils.getMinInRow(altWeightEdge, vertexEdgeOut) +
+                ArrayUtils.getMinInColumn(altWeightEdge, vertexEdgeIn);
+
+        return includeEdgeH < excludeEdgeH;
     }
 
     public boolean isFull () {
         for (int i = 0; i < weightEdge.length; i++) {
             for (int j = 0; j < weightEdge.length; j++) {
-                if (weightEdge.equals(Double.MAX_VALUE)) {
+                if ((i != j) && (weightEdge.equals(Double.MAX_VALUE))) {
                     return false;
                 }
             }
