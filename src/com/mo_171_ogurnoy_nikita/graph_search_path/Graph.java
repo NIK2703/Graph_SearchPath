@@ -1,6 +1,5 @@
 package com.mo_171_ogurnoy_nikita.graph_search_path;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Graph {
@@ -147,32 +146,38 @@ public class Graph {
 
     //getSolutionTravelingSalesmanProblem
     public Path getSolutionTravelingSalesmanProblem() {
-        if(!isFull()) {
-            return null;
-        }
+//        if(!isFull()) {
+//            return null;
+//        }
 
-        Path minPath;
+        ArrayList<Integer> vertexPath = new ArrayList<>();
         Double[][] matrix = ArrayUtils.copy(weightEdge);
+
         Double h = ArrayUtils.adductMatrix(matrix);
-        int currentVertex = 0;
+        while (vertexPath.size() != weightEdge.length) {
+            int[] edge = ArrayUtils.getMinElementIndexMaxW(matrix);
+            Double excludeWDelta = matrix[edge[2]][edge[3]] + matrix[edge[4]][edge[5]];
 
-        int[] row = ArrayUtils.getMinElementIndex(matrix);
-
-        nextEdge(row[0], row[1], matrix, h);
-
+            if (nextEdge(edge[0], edge[1], matrix, h, excludeWDelta)) {
+                vertexPath.add(edge[1]);
+            }
+            Path.blockEdge(matrix, edge[0], edge[1]);
+        }
 
         return null;
     }
 
-    public boolean nextEdge (int vertexEdgeOut, int vertexEdgeIn, Double[][] altWeightEdge, Double h) {
-        Double[][] redMatrix = ArrayUtils.copy(altWeightEdge);
-        Path.blockVertex(redMatrix,1);
-        Path.blockEdge(redMatrix, vertexEdgeIn, vertexEdgeOut);
-        Double includeEdgeH = h + ArrayUtils.adductMatrix(redMatrix);
-        Double a = ArrayUtils.getMinInRow(altWeightEdge, vertexEdgeOut);
-        Double b = ArrayUtils.getMinInColumn(altWeightEdge, vertexEdgeIn);
-        Double excludeEdgeH = h + ArrayUtils.getMinInRow(altWeightEdge, vertexEdgeOut) +
-                ArrayUtils.getMinInColumn(altWeightEdge, vertexEdgeIn);
+    public boolean nextEdge (int vertexEdgeOut, int vertexEdgeIn, Double[][] altWeightEdge, Double h, Double excludeWDelta) {
+        Double[][] reducedMatrix = ArrayUtils.copy(altWeightEdge);
+        ArrayUtils.print(reducedMatrix);
+        Path.blockOut(reducedMatrix, vertexEdgeOut);
+        Path.blockIn(reducedMatrix, vertexEdgeIn);
+        Path.blockEdge(reducedMatrix, vertexEdgeIn, vertexEdgeOut);
+        Double includeEdgeH = h + ArrayUtils.adductMatrix(reducedMatrix);
+
+        Double[][] matrixBlockedEdge = ArrayUtils.copy(altWeightEdge);
+        Path.blockEdge(matrixBlockedEdge, vertexEdgeOut , vertexEdgeIn);
+        Double excludeEdgeH = h + excludeWDelta;
 
         return includeEdgeH < excludeEdgeH;
     }

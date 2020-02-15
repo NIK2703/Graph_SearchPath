@@ -17,7 +17,6 @@ public class Path{
         this.vseq = (ArrayList<Integer>) p.vseq.clone();
     }
 
-
     Double subLen(int len, Double[][] weightEdge){
         double sublen = 0;
         for(int i=0; i<len-1; i++)
@@ -27,11 +26,20 @@ public class Path{
 
 
     static void blockVertex(Double[][] weightEdge, Integer index) {
+        blockOut(weightEdge, index);
+        blockIn(weightEdge,index);
+    }
+
+    static void blockOut(Double[][] weightEdge, Integer index) {
         Integer vnum = weightEdge.length;
         for(int i=0; i<vnum; i++)
-                weightEdge[i][index] = Double.MAX_VALUE;
-        for(int i=0; i<vnum; i++)
             weightEdge[index][i] = Double.MAX_VALUE;
+    }
+
+    static void blockIn(Double[][] weightEdge, Integer index) {
+        Integer vnum = weightEdge.length;
+        for(int i=0; i<vnum; i++)
+            weightEdge[i][index] = Double.MAX_VALUE;
     }
 
     static void blockEdge(Double[][] weightEdge, Integer vout, Integer vin){
@@ -42,7 +50,6 @@ public class Path{
         for(int i = 0; i<rootLen-1; i++)
             blockVertex(weightEdge,vseq.get(i));
     }
-
 
     public String toString() {
         return val + " - " + vseq.toString();

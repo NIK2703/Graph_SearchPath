@@ -5,12 +5,8 @@ public class ArrayUtils {
         Double h = 0.0;
         for(int i = 0; i < matrix.length; i++) {
             Double minVal = Double.MAX_VALUE;
-            int minInd = 0;
             for (int j = 0 ; j < matrix[i].length; j++) {
-                if (matrix[i][j] < minVal) {
-                    minVal = matrix[i][j];
-                    minInd = j;
-                }
+                minVal = Math.min(minVal, matrix[i][j]);
             }
             if (minVal == Double.MAX_VALUE)
             {
@@ -25,12 +21,8 @@ public class ArrayUtils {
         }
         for(int i = 0; i < matrix[0].length; i++) {
             Double minVal = Double.MAX_VALUE;
-            int minInd = 0;
             for (int j = 0 ; j < matrix.length; j++) {
-                if (matrix[j][i] < minVal) {
-                    minVal = matrix[j][i];
-                    minInd = i;
-                }
+                minVal = Math.min(minVal, matrix[j][i]);
             }
             if (minVal == Double.MAX_VALUE)
             {
@@ -109,5 +101,80 @@ public class ArrayUtils {
         }
         int[] index = {indRow, indColumn};
         return index;
+    }
+
+    public static int[] getMinElementIndexMaxW(Double[][] matrix) {
+        int[] out = new int[6];
+        double maxW = Double.MIN_VALUE;
+        Double minVal = Double.MAX_VALUE;
+        for(int i = 0; i < matrix.length; i++) {
+            for(int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] <= minVal) {
+                    if(matrix[i][j].equals(minVal)) {
+                        double minWRow = Double.MAX_VALUE;
+                        double minWColumn = Double.MAX_VALUE;
+                        int indWMinRowX = 0;
+                        int indWMinRowY = 0;
+                        int indWMinColumnX = 0;
+                        int indWMinColumnY = 0;
+                        for(int k = 0; k < matrix[i].length; k++) {
+                            if(matrix[i][k] != Double.MAX_VALUE && k != j) {
+                                if(matrix[i][k] < minWRow) {
+                                    minWRow = matrix[i][k];
+                                    indWMinRowX = i;
+                                    indWMinRowY = k;
+                                }
+                            }
+                        }
+                        for(int k = 0; k < matrix.length; k++) {
+                            if(matrix[k][j] != Double.MAX_VALUE && k != i) {
+                                if(matrix[k][j] < minWColumn) {
+                                    minWRow = matrix[k][j];
+                                    indWMinColumnX = k;
+                                    indWMinColumnY = j;
+                                }
+                            }
+                        }
+                        double w = minWRow + minWColumn;
+                        if(w > maxW) {
+                            maxW = w;
+                            out[2] = indWMinRowX;
+                            out[3] = indWMinRowY;
+                            out[4] = indWMinColumnX;
+                            out[5] = indWMinColumnY;
+                        }
+                        else continue;
+                    }
+                    minVal = matrix[i][j];
+                    out[0] = i;
+                    out[1] = j;
+                }
+            }
+        }
+        return out;
+    }
+
+    public static void print(Double[] arr) {
+        System.out.print("[");
+        for(int i = 0; i < arr.length; i++) {
+            System.out.print(arr[i]);
+            if(i != arr.length - 1) {
+                System.out.print(", ");
+            }
+        }
+        System.out.print("]");
+    }
+
+    public static void print(Double[][] matrix) {
+        System.out.println("[");
+        for(int i = 0; i < matrix.length; i++) {
+            System.out.print("  ");
+            print(matrix[i]);
+            if(i != matrix.length - 1) {
+                System.out.print(",");
+            }
+            System.out.println();
+        }
+        System.out.println("]");
     }
 }
