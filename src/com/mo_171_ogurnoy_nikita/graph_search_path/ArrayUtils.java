@@ -1,5 +1,7 @@
 package com.mo_171_ogurnoy_nikita.graph_search_path;
 
+import java.util.ArrayList;
+
 public class ArrayUtils {
     public static Double adductMatrix (Double[][] matrix) {
         Double h = 0.0;
@@ -135,11 +137,11 @@ public class ArrayUtils {
                                 }
                             }
                         }
-                        if (minWRow == Double.MAX_VALUE || minWColumn == Double.MAX_VALUE) {
+                        /*if (minWRow == Double.MAX_VALUE && minWColumn == Double.MAX_VALUE) {
                             continue;
-                        }
-                        double w = minWRow + minWColumn;
-                        if(w > maxW) {
+                        }*/
+                        double w = ((minWRow != Double.MAX_VALUE) ? minWRow : 0) + ((minWColumn != Double.MAX_VALUE) ? minWColumn : 0);
+                        if(w >= maxW) {
                             maxW = w;
                             out[2] = indWMinRowX;
                             out[3] = indWMinRowY;
@@ -155,6 +157,29 @@ public class ArrayUtils {
             }
         }
         return out;
+    }
+
+    public static boolean isNull(Double[][] matrix) {
+        for (Double[] doubles : matrix) {
+            for (Double aDouble : doubles) {
+                if (aDouble == Double.MAX_VALUE || aDouble == 0);
+                else return false;
+            }
+        }
+        return true;
+    }
+
+    public static ArrayList<Integer> getNullIndexes(Double[][] matrix) {
+        ArrayList<Integer> nullIndexes = new ArrayList<>();
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] == 0) {
+                    nullIndexes.add(i);
+                    nullIndexes.add(j);
+                }
+            }
+        }
+        return nullIndexes;
     }
 
     public static void print(Double[] arr) {

@@ -152,11 +152,24 @@ public class Graph {
 
         ArrayList<Integer> vertexPath = new ArrayList<>();
         Double[][] matrix = ArrayUtils.copy(weightEdge);
+        int startVertex = 0;
 
         Double h = ArrayUtils.adductMatrix(matrix);
         HashMap<Integer, Integer> includedEdges = new HashMap<>();
-        HashMap<Integer, Integer> excludedEdges = new HashMap<>();
+        //HashMap<Integer, Integer> excludedEdges = new HashMap<>();
         while (includedEdges.size() < weightEdge.length) {
+            ArrayUtils.print(matrix);
+            if(ArrayUtils.isNull(matrix)) {
+                ArrayList<Integer> connectEdges = ArrayUtils.getNullIndexes(matrix);
+                for (int i = 0; i < connectEdges.size(); i += 2) {
+                    includedEdges.put(connectEdges.get(i), connectEdges.get(i+1));
+                }
+                vertexPath.add(startVertex);
+                while (vertexPath.size() < includedEdges.size() + 1) {
+                    vertexPath.add(includedEdges.get(vertexPath.get(vertexPath.size() - 1)));
+                }
+                break;
+            }
             int[] edge = ArrayUtils.getMinElementIndexMaxW(matrix);
             Double excludeWDelta = matrix[edge[2]][edge[3]] + matrix[edge[4]][edge[5]];
 
@@ -168,18 +181,23 @@ public class Graph {
             h += ArrayUtils.adductMatrix(matrix);
 
             if (h <= excludeEdgeH) {
+                if (includedEdges.size() == 0) {
+                    startVertex = edge[0];
+                }
                 includedEdges.put(edge[0], edge[1]);
-                /*for(Integer visitedVertex : includedEdges.keySet()) {
-                    Path.blockEdge(matrix, edge[1], visitedVertex);
-                }*/
+                for(Integer visitedVertex : includedEdges.keySet()) {
+                    if(matrix[edge[1]][visitedVertex] == 0) {
+                        Path.blockEdge(matrix, edge[1], visitedVertex);
+                    }
+                }
             }
-            else {
+            /*else {
                 excludedEdges.put(edge[0], edge[1]);
-            }
+            }*/
             Path.blockEdge(matrix, edge[0], edge[1]);
         }
 
-        return new Path(includedEdges, 0, h);
+        return new Path(h, vertexPath);
     }
 
     public boolean isFull () {
