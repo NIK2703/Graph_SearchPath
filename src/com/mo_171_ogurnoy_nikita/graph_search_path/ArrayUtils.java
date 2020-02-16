@@ -110,7 +110,7 @@ public class ArrayUtils {
         for(int i = 0; i < matrix.length; i++) {
             for(int j = 0; j < matrix[i].length; j++) {
                 if (matrix[i][j] <= minVal) {
-                    if(matrix[i][j].equals(minVal)) {
+                    //if(matrix[i][j].equals(minVal)) {
                         double minWRow = Double.MAX_VALUE;
                         double minWColumn = Double.MAX_VALUE;
                         int indWMinRowX = 0;
@@ -129,11 +129,14 @@ public class ArrayUtils {
                         for(int k = 0; k < matrix.length; k++) {
                             if(matrix[k][j] != Double.MAX_VALUE && k != i) {
                                 if(matrix[k][j] < minWColumn) {
-                                    minWRow = matrix[k][j];
+                                    minWColumn = matrix[k][j];
                                     indWMinColumnX = k;
                                     indWMinColumnY = j;
                                 }
                             }
+                        }
+                        if (minWRow == Double.MAX_VALUE || minWColumn == Double.MAX_VALUE) {
+                            continue;
                         }
                         double w = minWRow + minWColumn;
                         if(w > maxW) {
@@ -142,12 +145,12 @@ public class ArrayUtils {
                             out[3] = indWMinRowY;
                             out[4] = indWMinColumnX;
                             out[5] = indWMinColumnY;
+                            minVal = matrix[i][j];
+                            out[0] = i;
+                            out[1] = j;
                         }
-                        else continue;
-                    }
-                    minVal = matrix[i][j];
-                    out[0] = i;
-                    out[1] = j;
+                        //else continue;
+                    //}
                 }
             }
         }

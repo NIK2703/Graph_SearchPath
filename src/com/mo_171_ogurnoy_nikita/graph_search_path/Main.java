@@ -6,17 +6,20 @@ public class Main {
 
     public static void main(String[] args) {
         //(new form()).init();
-        Double[][] d = TestTravelingSalesmanProblem.generateFullGraphEdgeWeight(5);
-        Double[][] h = ArrayUtils.deleteColumn(d,2);
-        Double minInRow = ArrayUtils.getMinInRow(h, 2);
-        Double minInColumn = ArrayUtils.getMinInColumn(h, 2);
-        //******
-        double[][] data = {
+
+        /*double[][] data = {
                 {Double.MAX_VALUE, 25, 40, 31, 27},
                 {5, Double.MAX_VALUE, 17, 30, 25},
                 {19, 15, Double.MAX_VALUE, 6, 1},
                 {9, 50, 24, Double.MAX_VALUE, 6},
                 {22, 8, 7, 10, Double.MAX_VALUE}
+        };*/
+        double[][] data = {
+                {Double.MAX_VALUE, 90, 80, 40, 100},
+                {60, Double.MAX_VALUE, 40, 50, 70},
+                {50, 30, Double.MAX_VALUE, 60, 20},
+                {10, 70, 20, Double.MAX_VALUE, 50},
+                {20, 40, 50, 20, Double.MAX_VALUE}
         };
 
         Double[][] Data = new Double[data.length][];
@@ -27,12 +30,9 @@ public class Main {
             }
         }
 
+        //Graph g = new Graph(TestTravelingSalesmanProblem.generateFullGraphEdgeWeight(5));
         Graph g = new Graph(Data);
-        g.getSolutionTravelingSalesmanProblem();
+        System.out.println(g.getSolutionTravelingSalesmanProblem());
 
-        Double hD = ArrayUtils.adductMatrix(Data);
-        //******
-
-        System.out.println();
     }
 }

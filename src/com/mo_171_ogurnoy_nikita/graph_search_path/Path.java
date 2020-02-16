@@ -1,6 +1,8 @@
 package com.mo_171_ogurnoy_nikita.graph_search_path;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Path{
@@ -15,6 +17,15 @@ public class Path{
     Path(Path p){
         this.val = p.val;
         this.vseq = (ArrayList<Integer>) p.vseq.clone();
+    }
+
+    Path(HashMap<Integer, Integer> includedEdges, int start, Double val) {
+        vseq = new ArrayList<>();
+        vseq.add(start);
+        while (vseq.size() < includedEdges.size() + 1) {
+            vseq.add(includedEdges.get(vseq.get(vseq.size() - 1)));
+        }
+        this.val = val;
     }
 
     Double subLen(int len, Double[][] weightEdge){

@@ -154,32 +154,32 @@ public class Graph {
         Double[][] matrix = ArrayUtils.copy(weightEdge);
 
         Double h = ArrayUtils.adductMatrix(matrix);
-        while (vertexPath.size() != weightEdge.length) {
+        HashMap<Integer, Integer> includedEdges = new HashMap<>();
+        HashMap<Integer, Integer> excludedEdges = new HashMap<>();
+        while (includedEdges.size() < weightEdge.length) {
             int[] edge = ArrayUtils.getMinElementIndexMaxW(matrix);
             Double excludeWDelta = matrix[edge[2]][edge[3]] + matrix[edge[4]][edge[5]];
 
-            if (nextEdge(edge[0], edge[1], matrix, h, excludeWDelta)) {
-                vertexPath.add(edge[1]);
+            Path.blockOut(matrix, edge[0]);
+            Path.blockIn(matrix, edge[1]);
+            Path.blockEdge(matrix, edge[1], edge[0]);
+
+            Double excludeEdgeH = h + excludeWDelta;
+            h += ArrayUtils.adductMatrix(matrix);
+
+            if (h <= excludeEdgeH) {
+                includedEdges.put(edge[0], edge[1]);
+                /*for(Integer visitedVertex : includedEdges.keySet()) {
+                    Path.blockEdge(matrix, edge[1], visitedVertex);
+                }*/
+            }
+            else {
+                excludedEdges.put(edge[0], edge[1]);
             }
             Path.blockEdge(matrix, edge[0], edge[1]);
         }
 
-        return null;
-    }
-
-    public boolean nextEdge (int vertexEdgeOut, int vertexEdgeIn, Double[][] altWeightEdge, Double h, Double excludeWDelta) {
-        Double[][] reducedMatrix = ArrayUtils.copy(altWeightEdge);
-        ArrayUtils.print(reducedMatrix);
-        Path.blockOut(reducedMatrix, vertexEdgeOut);
-        Path.blockIn(reducedMatrix, vertexEdgeIn);
-        Path.blockEdge(reducedMatrix, vertexEdgeIn, vertexEdgeOut);
-        Double includeEdgeH = h + ArrayUtils.adductMatrix(reducedMatrix);
-
-        Double[][] matrixBlockedEdge = ArrayUtils.copy(altWeightEdge);
-        Path.blockEdge(matrixBlockedEdge, vertexEdgeOut , vertexEdgeIn);
-        Double excludeEdgeH = h + excludeWDelta;
-
-        return includeEdgeH < excludeEdgeH;
+        return new Path(includedEdges, 0, h);
     }
 
     public boolean isFull () {
