@@ -141,7 +141,7 @@ public class ArrayUtils {
                             continue;
                         }*/
                         double w = ((minWRow != Double.MAX_VALUE) ? minWRow : 0) + ((minWColumn != Double.MAX_VALUE) ? minWColumn : 0);
-                        if(w >= maxW) {
+                        if(w > maxW) {
                             maxW = w;
                             out[2] = indWMinRowX;
                             out[3] = indWMinRowY;
