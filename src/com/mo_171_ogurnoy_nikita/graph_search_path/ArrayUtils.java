@@ -1,6 +1,8 @@
 package com.mo_171_ogurnoy_nikita.graph_search_path;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class ArrayUtils {
     public static Double adductMatrix (Double[][] matrix) {
@@ -105,43 +107,47 @@ public class ArrayUtils {
         return index;
     }
 
-    public static int[] getMinElementIndexMaxW(Double[][] matrix) {
+    public static int[] getMinElementIndexMaxW(Double[][] matrix, HashMap<Integer, Integer> includedEdges) {
         int[] out = new int[6];
         double maxW = Double.MIN_VALUE;
         Double minVal = Double.MAX_VALUE;
-        for(int i = 0; i < matrix.length; i++) {
-            for(int j = 0; j < matrix[i].length; j++) {
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
                 if (matrix[i][j] <= minVal) {
                     //if(matrix[i][j].equals(minVal)) {
-                        double minWRow = Double.MAX_VALUE;
-                        double minWColumn = Double.MAX_VALUE;
-                        int indWMinRowX = 0;
-                        int indWMinRowY = 0;
-                        int indWMinColumnX = 0;
-                        int indWMinColumnY = 0;
-                        for(int k = 0; k < matrix[i].length; k++) {
-                            if(matrix[i][k] != Double.MAX_VALUE && k != j) {
-                                if(matrix[i][k] < minWRow) {
-                                    minWRow = matrix[i][k];
-                                    indWMinRowX = i;
-                                    indWMinRowY = k;
-                                }
+                    double minWRow = Double.MAX_VALUE;
+                    double minWColumn = Double.MAX_VALUE;
+                    int indWMinRowX = 0;
+                    int indWMinRowY = 0;
+                    int indWMinColumnX = 0;
+                    int indWMinColumnY = 0;
+                    for (int k = 0; k < matrix[i].length; k++) {
+                        if (matrix[i][k] != Double.MAX_VALUE && k != j) {
+                            if (matrix[i][k] < minWRow) {
+                                minWRow = matrix[i][k];
+                                indWMinRowX = i;
+                                indWMinRowY = k;
                             }
                         }
-                        for(int k = 0; k < matrix.length; k++) {
-                            if(matrix[k][j] != Double.MAX_VALUE && k != i) {
-                                if(matrix[k][j] < minWColumn) {
-                                    minWColumn = matrix[k][j];
-                                    indWMinColumnX = k;
-                                    indWMinColumnY = j;
-                                }
+                    }
+                    for (int k = 0; k < matrix.length; k++) {
+                        if (matrix[k][j] != Double.MAX_VALUE && k != i) {
+                            if (matrix[k][j] < minWColumn) {
+                                minWColumn = matrix[k][j];
+                                indWMinColumnX = k;
+                                indWMinColumnY = j;
                             }
                         }
+                    }
                         /*if (minWRow == Double.MAX_VALUE && minWColumn == Double.MAX_VALUE) {
                             continue;
                         }*/
-                        double w = ((minWRow != Double.MAX_VALUE) ? minWRow : 0) + ((minWColumn != Double.MAX_VALUE) ? minWColumn : 0);
-                        if(w > maxW) {
+                    double w = ((minWRow != Double.MAX_VALUE) ? minWRow : 0) + ((minWColumn != Double.MAX_VALUE) ? minWColumn : 0);
+                    if (w > maxW) {
+                        HashMap<Integer, Integer> testLoop = new HashMap<>(includedEdges);
+                        testLoop.put(i, j);
+                        Path loop = Path.getLoop(testLoop, i, 0.0);
+                        if(loop == null) {
                             maxW = w;
                             out[2] = indWMinRowX;
                             out[3] = indWMinRowY;
@@ -151,18 +157,22 @@ public class ArrayUtils {
                             out[0] = i;
                             out[1] = j;
                         }
-                        //else continue;
+                    }
+                    //else continue;
                     //}
                 }
             }
+        }
+        if (out[0] == out[1]) {
+            ArrayUtils.print(matrix);
         }
         return out;
     }
 
     public static boolean isNull(Double[][] matrix) {
-        for (Double[] doubles : matrix) {
-            for (Double aDouble : doubles) {
-                if (aDouble == Double.MAX_VALUE || aDouble == 0);
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] == Double.MAX_VALUE || matrix[i][j] == 0);
                 else return false;
             }
         }

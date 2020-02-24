@@ -1,9 +1,6 @@
 package com.mo_171_ogurnoy_nikita.graph_search_path;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class Path{
     public Double val;
@@ -19,6 +16,8 @@ public class Path{
         this.vseq = (ArrayList<Integer>) p.vseq.clone();
     }
 
+
+
     /*Path(HashMap<Integer, Integer> includedEdges, int start, Double val) {
         vseq = new ArrayList<>();
         vseq.add(start);
@@ -27,6 +26,21 @@ public class Path{
         }
         this.val = val;
     }*/
+
+    public static Path getLoop(HashMap<Integer, Integer> includedEdges, int startVertex, Double val) {
+        ArrayList<Integer> vertexPath = new ArrayList<>();
+        vertexPath.add(startVertex);
+        HashSet<Integer> visitedVertex = new HashSet<>();
+        visitedVertex.add(startVertex);
+        while (vertexPath.size() < includedEdges.size() + 1) {
+            vertexPath.add(includedEdges.get(vertexPath.get(vertexPath.size() - 1)));
+            if (visitedVertex.contains(includedEdges.get(vertexPath.get(vertexPath.size() - 2)))) {
+                break;
+            }
+            visitedVertex.add(includedEdges.get(vertexPath.get(vertexPath.size() - 2)));
+        }
+        return (vertexPath.get(0) == vertexPath.get(vertexPath.size() - 1) ? new Path(val, vertexPath) : null);
+    }
 
     Double subLen(int len, Double[][] weightEdge){
         double sublen = 0;

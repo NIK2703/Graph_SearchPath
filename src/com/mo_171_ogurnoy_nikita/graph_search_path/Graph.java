@@ -154,16 +154,25 @@ public class Graph {
         Double[][] matrix = ArrayUtils.copy(weightEdge);
         int startVertex = 0;
 
-        Double h = ArrayUtils.adductMatrix(matrix);
+        //Double h = ArrayUtils.adductMatrix(matrix);
+        BinaryTreeNode<Double, int[]> pathTreeRoot = new BinaryTreeNode<>(ArrayUtils.adductMatrix(matrix), null);
+        //[0] - outVertex; [1] - inVertex; [2]: 0 - exclude, 1 - include
+        ArrayList<BinaryTreeNode<Double, int[]>> pathTreeNodes = new ArrayList<>();
+        BinaryTreeNode<Double, int[]> currentNode = pathTreeRoot;
         HashMap<Integer, Integer> includedEdges = new HashMap<>();
-        HashMap<Integer, Integer> excludedEdges = new HashMap<>();
-        while (includedEdges.size() < weightEdge.length) {
+        HashSet<Integer> excludedVertex = new HashSet<Integer>();
+        while (/*includedEdges.size()*/ pathTreeRoot.getHeight(0) < weightEdge.length) {
             //ArrayUtils.print(matrix);
             if(ArrayUtils.isNull(matrix)) {
                 ArrayList<Integer> connectEdges = ArrayUtils.getNullIndexes(matrix);
                 for (int i = 0; i < connectEdges.size(); i += 2) {
-                    if(!includedEdges.values().contains(connectEdges.get(i+1))) {
-                        includedEdges.put(connectEdges.get(i), connectEdges.get(i + 1));
+                    if(!(includedEdges.keySet().contains(connectEdges.get(i)) || includedEdges.values().contains(connectEdges.get(i+1)))) {
+                        HashMap<Integer, Integer> testLoop = new HashMap<>(includedEdges);
+                        testLoop.put(connectEdges.get(i), connectEdges.get(i + 1));
+                        Path loop = Path.getLoop(testLoop, startVertex, 0.0);
+                        if(loop == null || loop.vseq.size() == matrix.length + 1) {
+                            includedEdges.put(connectEdges.get(i), connectEdges.get(i + 1));
+                        }
                     }
                 }
                 vertexPath.add(startVertex);
@@ -172,34 +181,46 @@ public class Graph {
                 }
                 break;
             }
-            int[] edge = ArrayUtils.getMinElementIndexMaxW(matrix);
+            int[] edge = ArrayUtils.getMinElementIndexMaxW(matrix, includedEdges);
             Double excludeWDelta = matrix[edge[2]][edge[3]] + matrix[edge[4]][edge[5]];
 
-            Path.blockOut(matrix, edge[0]);
-            Path.blockIn(matrix, edge[1]);
             Path.blockEdge(matrix, edge[1], edge[0]);
+            Double[][] includeEdgeMatrix = new Double[matrix.length][];
+            for (int i = 0; i < matrix.length; i++) {
+                includeEdgeMatrix[i] = matrix[i].clone();
+            }
+            Path.blockOut(includeEdgeMatrix, edge[0]);
+            Path.blockIn(includeEdgeMatrix, edge[1]);
 
-            Double excludeEdgeH = h + excludeWDelta;
-            h += ArrayUtils.adductMatrix(matrix);
+            currentNode.setLeft(new BinaryTreeNode(currentNode.getKey() + excludeWDelta, new int[]{edge[0], edge[1], 0}));
+            currentNode.setRight(new BinaryTreeNode(currentNode.getKey() + ArrayUtils.adductMatrix(includeEdgeMatrix), new int[]{edge[0], edge[1], 1}));
+            /*Double excludeEdgeH = h + excludeWDelta;
+            h += ArrayUtils.adductMatrix(matrix);*/
 
-            if (h < excludeEdgeH || h.equals(excludeEdgeH)) {
+            currentNode = currentNode.getMinLeaf();
+            pathTreeNodes.add(currentNode);
+            if (currentNode.getValue()[2] == 1) {
+                matrix = includeEdgeMatrix;
+                includedEdges.put(currentNode.getValue()[0], currentNode.getValue()[1]);
+            }
+            /*if (currentNode.getValue()[2] == 1) {
                 if (includedEdges.size() == 0) {
                     startVertex = edge[0];
                 }
                 includedEdges.put(edge[0], edge[1]);
-                /*for(Integer visitedVertex : includedEdges.keySet()) {
+                *//*for(Integer visitedVertex : includedEdges.keySet()) {
                     if(matrix[edge[1]][visitedVertex] == 0 && visitedVertex != startVertex) {
                         Path.blockEdge(matrix, edge[1], visitedVertex);
                     }
-                }*/
+                }*//*
             }
             else {
                 excludedEdges.put(edge[0], edge[1]);
-            }
+            }*/
             Path.blockEdge(matrix, edge[0], edge[1]);
         }
 
-        return new Path(h, vertexPath);
+        return new Path(currentNode.getKey(), vertexPath);
     }
 
     public boolean isFull () {
