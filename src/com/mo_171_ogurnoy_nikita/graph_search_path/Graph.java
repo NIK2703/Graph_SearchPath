@@ -161,28 +161,21 @@ public class Graph {
         BinaryTreeNode<Double, int[]> currentNode = pathTreeRoot;
         HashMap<Integer, Integer> includedEdges = new HashMap<>();
         HashSet<Integer> excludedVertex = new HashSet<Integer>();
-        while (/*includedEdges.size()*/ pathTreeRoot.getHeight(0) < weightEdge.length) {
+        while (includedEdges.size()  /*pathTreeRoot.getHeight(0)*/ < weightEdge.length) {
             //ArrayUtils.print(matrix);
             if(ArrayUtils.isNull(matrix)) {
-                ArrayList<Integer> connectEdges = ArrayUtils.getNullIndexes(matrix);
-                for (int i = 0; i < connectEdges.size(); i += 2) {
-                    if(!(includedEdges.keySet().contains(connectEdges.get(i)) || includedEdges.values().contains(connectEdges.get(i+1)))) {
-                        HashMap<Integer, Integer> testLoop = new HashMap<>(includedEdges);
-                        testLoop.put(connectEdges.get(i), connectEdges.get(i + 1));
-                        Path loop = Path.getLoop(testLoop, startVertex, 0.0);
-                        if(loop == null || loop.vseq.size() == matrix.length + 1) {
-                            includedEdges.put(connectEdges.get(i), connectEdges.get(i + 1));
-                        }
-                    }
-                }
-                vertexPath.add(startVertex);
-                while (vertexPath.size() < includedEdges.size() + 1) {
-                    vertexPath.add(includedEdges.get(vertexPath.get(vertexPath.size() - 1)));
-                }
+
                 break;
             }
             int[] edge = ArrayUtils.getMinElementIndexMaxW(matrix, includedEdges);
             Double excludeWDelta = matrix[edge[2]][edge[3]] + matrix[edge[4]][edge[5]];
+
+            HashMap<Integer, Integer> testLoop = new HashMap<>(includedEdges);
+            testLoop.put(edge[0], edge[1]);
+            Path loop = Path.getLoop(testLoop, edge[0], 0.0);
+            if(loop != null) {
+                System.out.println();
+            }
 
             Path.blockEdge(matrix, edge[1], edge[0]);
             Double[][] includeEdgeMatrix = new Double[matrix.length][];
@@ -197,7 +190,12 @@ public class Graph {
             /*Double excludeEdgeH = h + excludeWDelta;
             h += ArrayUtils.adductMatrix(matrix);*/
 
-            currentNode = currentNode.getMinLeaf();
+            if (loop == null) {
+                currentNode = currentNode.getMinLeaf();
+            }
+            else {
+                currentNode = currentNode.getLeft();
+            }
             pathTreeNodes.add(currentNode);
             if (currentNode.getValue()[2] == 1) {
                 matrix = includeEdgeMatrix;
@@ -218,6 +216,21 @@ public class Graph {
                 excludedEdges.put(edge[0], edge[1]);
             }*/
             Path.blockEdge(matrix, edge[0], edge[1]);
+        }
+        ArrayList<Integer> connectEdges = ArrayUtils.getNullIndexes(matrix);
+        for (int i = 0; i < connectEdges.size(); i += 2) {
+            if(!(includedEdges.keySet().contains(connectEdges.get(i)) || includedEdges.values().contains(connectEdges.get(i+1)))) {
+                HashMap<Integer, Integer> testLoop = new HashMap<>(includedEdges);
+                testLoop.put(connectEdges.get(i), connectEdges.get(i + 1));
+                Path loop = Path.getLoop(testLoop, startVertex, 0.0);
+                if(loop == null || loop.vseq.size() == matrix.length + 1) {
+                    includedEdges.put(connectEdges.get(i), connectEdges.get(i + 1));
+                }
+            }
+        }
+        vertexPath.add(startVertex);
+        while (vertexPath.size() < includedEdges.size() + 1) {
+            vertexPath.add(includedEdges.get(vertexPath.get(vertexPath.size() - 1)));
         }
 
         return new Path(currentNode.getKey(), vertexPath);

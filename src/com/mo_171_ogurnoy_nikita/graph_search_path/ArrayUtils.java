@@ -144,10 +144,7 @@ public class ArrayUtils {
                         }*/
                     double w = ((minWRow != Double.MAX_VALUE) ? minWRow : 0) + ((minWColumn != Double.MAX_VALUE) ? minWColumn : 0);
                     if (w > maxW) {
-                        HashMap<Integer, Integer> testLoop = new HashMap<>(includedEdges);
-                        testLoop.put(i, j);
-                        Path loop = Path.getLoop(testLoop, i, 0.0);
-                        if(loop == null) {
+
                             maxW = w;
                             out[2] = indWMinRowX;
                             out[3] = indWMinRowY;
@@ -156,7 +153,7 @@ public class ArrayUtils {
                             minVal = matrix[i][j];
                             out[0] = i;
                             out[1] = j;
-                        }
+
                     }
                     //else continue;
                     //}

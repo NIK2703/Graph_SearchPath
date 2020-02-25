@@ -21,14 +21,14 @@ public class Main {
                 {10, 70, 20, Double.MAX_VALUE, 50},
                 {20, 40, 50, 20, Double.MAX_VALUE}
         };*/
-        double[][] data = {
+        /*double[][] data = {
                 {Double.MAX_VALUE, 10, 15, 11, 2, 55},
                 {17, Double.MAX_VALUE, 16, 18, 21, 13},
                 {10, 50, Double.MAX_VALUE, 39, 22, 3},
                 {28, 29, 24, Double.MAX_VALUE, 28, 25},
                 {27, 9, 32, 9, Double.MAX_VALUE, 2},
                 {43, 48, 40, 43, 21, Double.MAX_VALUE}
-        };
+        };*/
         /*double[][] data = {
                 {Double.MAX_VALUE, 4, 10, 13},
                 {2, Double.MAX_VALUE, 9, 7},
@@ -53,8 +53,8 @@ public class Main {
             }
         }
 
-        Graph g = new Graph(TestTravelingSalesmanProblem.generateFullGraphEdgeWeight(10));
-        //Graph g = new Graph(Data);
+        //Graph g = new Graph(TestTravelingSalesmanProblem.generateFullGraphEdgeWeight(10));
+        Graph g = new Graph(Data);
         System.out.println(g.getSolutionTravelingSalesmanProblem());
 
     }
